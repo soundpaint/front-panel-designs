@@ -20,7 +20,27 @@
 \def\labelrad{1.3cm}
 \def\sqrthalf{0.707}
 
+\newcommand{\drawswitch}[1]{
+  \draw[fill=black] (0,0) circle (.5mm);
+  \node
+  at (0,2.5cm) {\fontsize{50}{0}\textbf{\sf\selectfont #1}};
+  \node
+  at (0,+0.8cm) {\fontsize{40}{0}\textbf{\sf\selectfont Off}};
+  \node
+  at (0,-0.8cm) {\fontsize{40}{0}\textbf{\sf\selectfont On}};
+}
+
 \begin{tikzpicture}[scale=4,line width=1pt]
+  \begin{scope}[xshift=-6cm]
+    \drawswitch{Power}
+  \end{scope}
+
+  % Power LED
+  \draw[fill=black] (-6cm,1.8cm) circle (.5mm);
+
+  \begin{scope}[xshift=25cm]
+    \drawswitch{}
+  \end{scope}
 
   \begin{scope}[xshift=7.5cm,yshift=3cm, line width=2.0mm, line cap=round]
     \draw (-5cm,0) -- (+5cm,0) node [midway, fill=white, align=center]
@@ -30,10 +50,10 @@
   \end{scope}
 
   \begin{scope}[xshift=18.5cm,yshift=3cm, line width=2.0mm, line cap=round]
-    \draw (-5cm,0) -- (+5cm,0) node [midway, fill=white, align=center]
+    \draw (-5cm,0) -- (+7.5cm,0) node [midway, fill=white, align=center]
       {\sf\bf\fontsize{50}{0}\selectfont\textbf{\sf{ HF Modulation }}};
     \draw (-5cm,0.0cm) -- (-5cm,-0.4cm);
-    \draw (+5cm,0.0cm) -- (+5cm,-0.4cm);
+    \draw (+7.5cm,0.0cm) -- (+7.5cm,-0.4cm);
   \end{scope}
 
   \foreach \x / \label / \xtrashift in {0/Volume/-2cm,1/Depth/0,2/Hacker Pitch/0,3/Depth/1cm,4/Hacker Pitch/1cm} {
