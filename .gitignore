@@ -1,0 +1,5 @@
+# build directories
+**/build
+
+# Emacs backup files
+*~
