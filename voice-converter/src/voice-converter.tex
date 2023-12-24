@@ -20,89 +20,123 @@
 \def\labelradius{1.3cm}
 \def\sqrthalf{0.707}
 
-\newcommand{\drawswitch}[1]{
-  \draw[fill=black] (0,0) circle (.25mm);
-  \node
-  at (0,1.285cm) {\fontsize{10}{0}\textbf{\sf #1}};
-  \node
-  at (0,+0.7cm) {\fontsize{8}{0}\textbf{\sf Off}};
-  \node
-  at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf On}};
+% parameters: xshift, yshift, label
+\newcommand{\drawgauge}[3]{
+  \begin{scope}[xshift=#1+1.25cm, yshift=#2,
+      text height=0.0cm, text depth=0.0cm, anchor=base]
+    % add subtle gray tone as background
+    \shade[shading=radial, inner color=white, outer color=gray!15]
+    (0,0) circle (\radius);
+
+    % partial dial gauge outline
+    \draw[black] (\sqrthalf*\radius,-\sqrthalf*\radius)
+    arc[start angle=-45, end angle=225, radius=\radius];
+    \draw[fill=black] (0,0) circle (.25mm);
+    \node[draw, circle, inner sep=.1mm,
+      label={[label distance=1.0cm,
+          font=\sf\bf\fontsize{10}{0}]90:\textbf{\sf#3}}]
+    (anchor) at (0,0) {};
+
+    % color wheel
+    \iftrue
+    \draw[shading=color wheel]
+    (225:{\innerradius-.5*\colorwheelwidth})
+    arc [start angle=225, delta angle=-270,
+      radius={\innerradius-.5*\colorwheelwidth}] --++
+    ({225-270}:\colorwheelwidth)
+    arc [start angle={225-270}, delta angle=270,
+      radius={\innerradius+.5*\colorwheelwidth}] --
+    cycle;
+    \fi
+
+    % short thin line at every 3 degrees
+    \foreach \x in {-45,-42,...,225}
+    \draw[line width=0.1mm] (\x:\radius-\minorticklen) -- (\x:\radius);
+
+    % long thin line at every 15 degrees
+    \foreach \x in {-45,-30,...,225}
+    \draw[line width=0.1mm] (\x:\radius-\majorticklen) -- (\x:\radius);
+
+    % very long fat line at every 30 degrees
+    \foreach \x in {-45,-15,...,225}
+    \draw[line width=0.2mm] (\x:\radius-\maxticklen) -- (\x:\radius);
+
+    % labels
+    \node[rotate=0, font=\fontsize{8}{0}]
+    at (225:\labelradius) {\textbf{\sf Min}};
+    \node[rotate=0, font=\fontsize{8}{0}]
+    at (-45:\labelradius) {\textbf{\sf Max}};
+  \end{scope}
 }
 
+% parameters: xshift, yshift, label
+\newcommand{\drawswitch}[3]{
+  \begin{scope}[xshift=#1+0.25cm,yshift=#2]
+    \draw[fill=black] (0,0) circle (.25mm);
+    \node
+    at (0,1.285cm) {\fontsize{10}{0}\textbf{\sf #3}};
+    \node
+    at (0,+0.7cm) {\fontsize{8}{0}\textbf{\sf Off}};
+    \node
+    at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf On}};
+  \end{scope}
+}
+
+% parameters: xshift, width, label
 \newcommand{\drawbracket}[3]{
-  \begin{scope}[xshift=#3, yshift=1.8cm, line width=0.5mm, line cap=round]
-    \draw (#2*-0.5,0) -- (#2*+0.5,0)
+  \begin{scope}[xshift=#1, yshift=1.8cm, line width=0.5mm, line cap=round]
+    \draw (0,0) -- (#2,0)
     node [midway, fill=white, align=center]
-    {\fontsize{10}{0}\textbf{\sf{ #1 }}};
-    \draw (#2*-0.5,0.0cm) -- (#2*-0.5,-0.2cm);
-    \draw (#2*+0.5,0.0cm) -- (#2*+0.5,-0.2cm);
+    {\fontsize{10}{0}\textbf{\sf{ #3 }}};
+    \draw (0,0.0cm) -- (0,-0.2cm);
+    \draw (#2,0.0cm) -- (#2,-0.2cm);
+  \end{scope}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawpowerarea}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawbracket{0}{3.25cm}{Power}
+    \drawgauge{0}{0}{Volume}
+    \drawswitch{2.75cm}{0}{}
+
+    % LED
+    \draw[fill=black] (3cm,1.28cm) circle (.25mm);
+  \end{scope}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawnfmodulationarea}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawbracket{0}{5cm}{NF Modulation}
+    \drawgauge{0}{0}{Depth}
+    \drawgauge{2.5cm}{0}{Hacker Pitch}
+  \end{scope}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawhfmodulationarea}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawbracket{0}{5.75cm}{HF Modulation}
+    \drawgauge{0}{0}{Depth}
+    \drawgauge{2.5cm}{0}{Hacker Pitch}
+    \drawswitch{5.25cm}{0}{}
+  \end{scope}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawpanel}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawpowerarea{5.5cm}{0}
+    \drawnfmodulationarea{0}{0}
+    \drawhfmodulationarea{0}{-3cm}
   \end{scope}
 }
 
 \begin{tikzpicture}[scale=1.0,line width=0.1mm]
-  \drawbracket{Power}{4.5cm}{-1.6cm}
-
-  % Power Switch
-  \begin{scope}[xshift=-3cm]
-    \drawswitch{}
-  \end{scope}
-
-  % Power LED
-  \draw[fill=black] (-3cm,1.28cm) circle (.25mm);
-
-  \begin{scope}[xshift=12.5cm]
-    \drawswitch{}
-  \end{scope}
-
-  \drawbracket{NF Modulation}{5cm}{3.75cm}
-  \drawbracket{HF Modulation}{6.25cm}{9.875cm}
-
-  \foreach \x / \label / \xtrashift in {0/Volume/-0.75cm,1/Depth/0,2/Hacker Pitch/0,3/Depth/0.5cm,4/Hacker Pitch/0.5cm} {
-
-    \begin{scope}[xshift=\x*2.5cm+\xtrashift,text height=0.0cm, text depth=0.0cm, anchor=base]
-      % add subtle gray tone as background
-      \shade[shading=radial, inner color=white, outer color=gray!15] (0,0) circle (\radius);
-
-      % partial dial gauge outline
-      \draw[black] (\sqrthalf*\radius,-\sqrthalf*\radius)
-      arc[start angle=-45, end angle=225, radius=\radius];
-      \draw[fill=black] (0,0) circle (.25mm);
-      \node[draw, circle, inner sep=.1mm,
-        label={[label distance=1.0cm,
-            font=\sf\bf\fontsize{10}{0}]90:\textbf{\sf\label}}]
-      (anchor) at (0,0) {};
-
-      % color wheel
-      \iftrue
-      \draw[shading=color wheel]
-      (225:{\innerradius-.5*\colorwheelwidth})
-      arc [start angle=225, delta angle=-270,
-        radius={\innerradius-.5*\colorwheelwidth}] --++
-      ({225-270}:\colorwheelwidth)
-      arc [start angle={225-270}, delta angle=270,
-        radius={\innerradius+.5*\colorwheelwidth}] --
-      cycle;
-      \fi
-
-      % short thin line at every 3 degrees
-      \foreach \x in {-45,-42,...,225}
-      \draw[line width=0.1mm] (\x:\radius-\minorticklen) -- (\x:\radius);
-
-      % long thin line at every 15 degrees
-      \foreach \x in {-45,-30,...,225}
-      \draw[line width=0.1mm] (\x:\radius-\majorticklen) -- (\x:\radius);
-
-      % very long fat line at every 30 degrees
-      \foreach \x in {-45,-15,...,225}
-      \draw[line width=0.2mm] (\x:\radius-\maxticklen) -- (\x:\radius);
-
-      % labels
-      \node[rotate=0, font=\fontsize{8}{0}]
-      at (225:\labelradius) {\textbf{\sf Min}};
-      \node[rotate=0, font=\fontsize{8}{0}]
-      at (-45:\labelradius) {\textbf{\sf Max}};
-    \end{scope}
+  \foreach \x in {0}
+  \foreach \y in {0,1,2}{
+    \drawpanel{\x*9cm}{\y*8cm}
   }
 \end{tikzpicture}
 
