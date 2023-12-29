@@ -28,10 +28,13 @@
     \shade[shading=radial, inner color=white, outer color=gray!15]
     (0,0) circle (\radius);
 
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (3mm);
+
     % partial dial gauge outline
     \draw[black] (\sqrthalf*\radius,-\sqrthalf*\radius)
     arc[start angle=-45, end angle=225, radius=\radius];
-    \draw[fill=black] (0,0) circle (.25mm);
     \node[draw, circle, inner sep=.1mm,
       label={[label distance=1.0cm,
           font=\sf\bf\fontsize{10}{0}]90:\textbf{\sf#3}}]
@@ -72,7 +75,11 @@
 % parameters: xshift, yshift, label
 \newcommand{\drawswitch}[3]{
   \begin{scope}[xshift=#1+0.25cm,yshift=#2]
-    \draw[fill=black] (0,0) circle (.25mm);
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (2mm);
+
+    % labels
     \node
     at (0,1.285cm) {\fontsize{10}{0}\textbf{\sf #3}};
     \node
@@ -96,12 +103,13 @@
 % parameters: xshift, yshift
 \newcommand{\drawpowerarea}[2]{
   \begin{scope}[xshift=#1,yshift=#2]
-    \drawbracket{0}{3.25cm}{Power}
+    \drawbracket{0}{3.30cm}{Power}
     \drawgauge{0}{0}{Volume}
-    \drawswitch{2.75cm}{0}{}
+    \drawswitch{2.75cm}{-0.12cm}{}
 
     % LED
-    \draw[fill=black] (3cm,1.28cm) circle (.25mm);
+    \draw[fill=black] (2.95cm,1.28cm) circle (.1mm);
+    \draw (2.95cm,1.28cm) circle (3.0mm);
   \end{scope}
 }
 
@@ -117,10 +125,10 @@
 % parameters: xshift, yshift
 \newcommand{\drawhfmodulationarea}[2]{
   \begin{scope}[xshift=#1,yshift=#2]
-    \drawbracket{0}{5.75cm}{HF Modulation}
+    \drawbracket{0}{5.80cm}{HF Modulation}
     \drawgauge{0}{0}{Depth}
     \drawgauge{2.5cm}{0}{Hacker Pitch}
-    \drawswitch{5.25cm}{0}{}
+    \drawswitch{5.25cm}{-0.12cm}{}
   \end{scope}
 }
 
@@ -129,14 +137,14 @@
   \begin{scope}[xshift=#1,yshift=#2]
     \drawpowerarea{5.5cm}{0}
     \drawnfmodulationarea{0}{0}
-    \drawhfmodulationarea{0}{-3cm}
+    \drawhfmodulationarea{0}{-3.2cm}
   \end{scope}
 }
 
 \begin{tikzpicture}[scale=1.0,line width=0.1mm]
   \foreach \x in {0}
   \foreach \y in {0,1,2}{
-    \drawpanel{\x*9cm}{\y*8cm}
+    \drawpanel{\x*9cm}{\y*7.2cm}
   }
 \end{tikzpicture}
 
