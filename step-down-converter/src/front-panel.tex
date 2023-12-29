@@ -1,0 +1,112 @@
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[tikz,margin=0mm,12pt,utf8,a4paper]{standalone}
+
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepgflibrary{shadings}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\def\radius{1cm}
+\def\colorwheelwidth{0.8mm}
+\def\innerradius{\radius-0.5*\colorwheelwidth}
+\def\minorticklen{0.8mm}
+\def\majorticklen{1.2mm}
+\def\maxticklen{1.6mm}
+\def\labelradius{1.3cm}
+\def\sqrthalf{0.707}
+
+% parameters: xshift, yshift, label
+\newcommand{\drawgauge}[3]{
+  \begin{scope}[xshift=#1+1.25cm, yshift=#2,
+      text height=0.0cm, text depth=0.0cm, anchor=base]
+    % add subtle gray tone as background
+    \shade[shading=radial, inner color=white, outer color=gray!15]
+    (0,0) circle (\radius);
+
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (3mm);
+
+    % partial dial gauge outline
+    \draw[black] (\sqrthalf*\radius,-\sqrthalf*\radius)
+    arc[start angle=-45, end angle=225, radius=\radius];
+    \node[draw, circle, inner sep=.1mm,
+      label={[label distance=1.0cm,
+          font=\sf\bf\fontsize{10}{0}]90:\textbf{\sf#3}}]
+    (anchor) at (0,0) {};
+
+    % color wheel
+    \iftrue
+    \draw[shading=color wheel]
+    (225:{\innerradius-.5*\colorwheelwidth})
+    arc [start angle=225, delta angle=-270,
+      radius={\innerradius-.5*\colorwheelwidth}] --++
+    ({225-270}:\colorwheelwidth)
+    arc [start angle={225-270}, delta angle=270,
+      radius={\innerradius+.5*\colorwheelwidth}] --
+    cycle;
+    \fi
+
+    % short thin line at every 3 degrees
+    \foreach \x in {-45,-42,...,225}
+    \draw[line width=0.1mm] (\x:\radius-\minorticklen) -- (\x:\radius);
+
+    % long thin line at every 15 degrees
+    \foreach \x in {-45,-30,...,225}
+    \draw[line width=0.1mm] (\x:\radius-\majorticklen) -- (\x:\radius);
+
+    % very long fat line at every 30 degrees
+    \foreach \x in {-45,-15,...,225}
+    \draw[line width=0.2mm] (\x:\radius-\maxticklen) -- (\x:\radius);
+
+    % labels
+    \foreach \x in {0,1,...,9}{
+      \def\volt{\number\numexpr\x+3\relax{}V}
+      \node[rotate=0, font=\fontsize{8}{0},xshift=+0.5mm,yshift=-1.5mm]
+      at (225-\x*30:\labelradius) {\textbf{\sf \volt}};
+    }
+  \end{scope}
+}
+
+% parameters: xshift, yshift, label
+\newcommand{\drawswitch}[3]{
+  \begin{scope}[xshift=#1+0.25cm,yshift=#2]
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (2mm);
+
+    % labels
+    \node
+    at (0,1.285cm) {\fontsize{10}{0}\textbf{\sf #3}};
+    \node
+    at (0,+0.7cm) {\fontsize{8}{0}\textbf{\sf Off}};
+    \node
+    at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf On}};
+  \end{scope}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawpanel}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawswitch{-2.5cm}{0}{}
+    \drawgauge{-0.5cm}{-0.1cm}{}
+    \draw (-2.7cm,+1.00cm) -- (-2.7cm,+1.30cm) -- (-2.4cm,+1.30cm);
+    \draw (+2.7cm,+1.00cm) -- (+2.7cm,+1.30cm) -- (+2.4cm,+1.30cm);
+    \draw (-2.7cm,-1.00cm) -- (-2.7cm,-1.30cm) -- (-2.4cm,-1.30cm);
+    \draw (+2.7cm,-1.00cm) -- (+2.7cm,-1.30cm) -- (+2.4cm,-1.30cm);
+  \end{scope}
+}
+
+\begin{tikzpicture}[scale=1.0,line width=0.1mm]
+  \foreach \x in {0,1}
+  \foreach \y in {0,1}{
+    \drawpanel{\x*6cm}{\y*3cm}
+  }
+\end{tikzpicture}
+
+\end{document}

@@ -1,0 +1,68 @@
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[tikz,margin=0mm,12pt,utf8,a4paper]{standalone}
+
+\usepackage{marvosym}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\begin{document}
+
+\pagestyle{empty}
+
+% parameters: xshift, yshift
+\newcommand{\drawpolarity}[2]{
+  \begin{scope}[xshift=#1,yshift=#2,line width=0.2mm]
+    \draw[fill=black] (0,0) circle (.4mm);
+    \begin{scope}[xshift=1.0mm*cos(-150),yshift=1.0mm*sin(-150),line cap=round]
+      \draw (0,0) arc (-150:+150:1.0mm);
+    \end{scope}
+    \draw[line cap=round] (-1.5mm,0) -- (0,0);
+    \draw (-3.0mm,0) -- (-2.0mm,0);
+    \draw (-2.5mm,-0.5mm) -- (-2.5mm,+0.5mm);
+  \end{scope}
+}
+
+% parameters: xshift, yshift, top label, bottom label
+\newcommand{\drawdcsocket}[4]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \draw[fill=white] (0,0) circle (4mm);
+    \draw[fill=black] (0,0) circle (.25mm);
+    \node
+    at (0,+0.7cm) {\fontsize{10}{0}\textbf{\sf #3}};
+    \node
+    at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf #4}};
+    \drawpolarity{-5mm}{-3.5mm}
+  \end{scope}
+}
+
+\newcommand{\dccurrent}{
+  % workaround for missing Unicode symbol "⎓" (U+2393)
+  \raisebox{1mm}{\Beam}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawpanel}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawdcsocket{-1.8cm}{0}{DC Input}{5V$\ldots$40V\dccurrent}
+    \drawdcsocket{+1.8cm}{0}{DC Output}{3V$\ldots$12V\dccurrent}
+    \node[text width=1cm,align=center,inner sep=1cm]
+    at (0,0) {\fontsize{8}{0}\textbf{\linespread{3}\sf
+      \raisebox{-1.2mm}{650mA}
+      \raisebox{+1.2mm}{max.}}};
+    \draw (-2.7cm,+0.65cm) -- (-2.7cm,+0.95cm) -- (-2.4cm,+0.95cm);
+    \draw (+2.7cm,+0.65cm) -- (+2.7cm,+0.95cm) -- (+2.4cm,+0.95cm);
+    \draw (-2.7cm,-0.65cm) -- (-2.7cm,-0.95cm) -- (-2.4cm,-0.95cm);
+    \draw (+2.7cm,-0.65cm) -- (+2.7cm,-0.95cm) -- (+2.4cm,-0.95cm);
+  \end{scope}
+}
+
+\begin{tikzpicture}[scale=1.0,line width=0.1mm]
+  \foreach \x in {0,1}
+  \foreach \y in {0,1}{
+    \drawpanel{\x*6cm}{\y*3cm}
+  }
+\end{tikzpicture}
+
+\end{document}
