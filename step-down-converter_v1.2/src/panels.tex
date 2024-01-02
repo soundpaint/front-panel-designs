@@ -1,0 +1,173 @@
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[tikz,margin=0mm,12pt,utf8,a4paper]{standalone}
+
+\usepackage{marvosym}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{soul}
+\usetikzlibrary{positioning}
+\usepgflibrary{shadings}
+
+\begin{document}
+
+\pagestyle{empty}
+
+% parameters: xshift, yshift
+\newcommand{\drawpolarity}[2]{
+  \begin{scope}[xshift=#1,yshift=#2,line width=0.2mm]
+    \draw[fill=black] (0,0) circle (.4mm);
+    \begin{scope}[xshift=1.0mm*cos(-150),yshift=1.0mm*sin(-150),line cap=round]
+      \draw (0,0) arc (-150:+150:1.0mm);
+    \end{scope}
+    \draw[line cap=round] (-1.5mm,0) -- (0,0);
+    \draw (-3.0mm,0) -- (-2.0mm,0);
+    \draw (-2.5mm,-0.5mm) -- (-2.5mm,+0.5mm);
+  \end{scope}
+}
+
+% parameters: xshift, yshift, top label, bottom line #1, bottom line #2
+\newcommand{\drawdcsocket}[5]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \draw[fill=white] (0,0) circle (4mm);
+    \draw[fill=black] (0,0) circle (.25mm);
+    \node
+    at (0,+0.7cm) {\fontsize{10}{0}\textbf{\sf #3}};
+    \node (line1)
+    at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf #4}};
+    \node[below=3mm of line1.west,anchor=west]
+    {\fontsize{8}{0}\textbf{\sf #5}};
+    \drawpolarity{-6mm}{-3.5mm}
+  \end{scope}
+}
+
+\newcommand{\dccurrent}{
+  % workaround for missing Unicode symbol “⎓” (U+2393)
+  \raisebox{1mm}{\Beam}
+}
+
+\newcommand{\accurrent}{
+  % workaround for missing Unicode symbol“⏦” (U+23E6)
+  \normalsize\st{$\sim$}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawbackpanel}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawdcsocket{-1.6cm}{0}{DC/AC Input}{4V$\ldots$24V\accurrent}{5V$\ldots$30V\dccurrent}
+    \drawdcsocket{+1.6cm}{0}{DC Output}{1.5V$\ldots$24V\dccurrent}{max. 2000mA}
+    \draw (-2.90cm,-1.25cm) rectangle (+2.90cm,+1.05cm);
+  \end{scope}
+}
+
+% parameters: xshift, yshift, label
+\newcommand{\drawgauge}[3]{
+  \begin{scope}[xshift=#1+1.25cm, yshift=#2,
+      text height=0.0cm, text depth=0.0cm, anchor=base]
+    \def\radius{1cm}
+    \def\colorwheelwidth{0.8mm}
+    \def\innerradius{\radius-0.5*\colorwheelwidth}
+    \def\minorticklen{0.8mm}
+    \def\majorticklen{1.2mm}
+    \def\maxticklen{1.6mm}
+    \def\labelradius{1.3cm}
+    \def\sqrthalf{0.707}
+
+    % add subtle gray tone as background
+    \shade[shading=radial, inner color=white, outer color=gray!15]
+    (0,0) circle (\radius);
+
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (3.5mm);
+
+    % partial dial gauge outline
+    \draw[black] (\sqrthalf*\radius,-\sqrthalf*\radius)
+    arc[start angle=-45, end angle=225, radius=\radius];
+    \node[draw, circle, inner sep=.1mm,
+      label={[label distance=1.4cm,
+          font=\sf\bf\fontsize{10}{0}]90:\textbf{\sf#3}}]
+    (anchor) at (0,0) {};
+
+    % color wheel
+    \iftrue
+    \draw[shading=color wheel]
+    (225:{\innerradius-.5*\colorwheelwidth})
+    arc [start angle=225, delta angle=-270,
+      radius={\innerradius-.5*\colorwheelwidth}] --++
+    ({225-270}:\colorwheelwidth)
+    arc [start angle={225-270}, delta angle=270,
+      radius={\innerradius+.5*\colorwheelwidth}] --
+    cycle;
+    \fi
+
+    % short thin line at every 3 degrees
+    \foreach \x in {-45,-42,...,225}
+    \draw[line width=0.1mm] (\x:\radius-\minorticklen) -- (\x:\radius);
+
+    % long thin line at every 12 degrees
+    \foreach \x in {-45,-33,...,219}
+    \draw[line width=0.1mm] (\x:\radius-\majorticklen) -- (\x:\radius);
+
+    % very long fat line at every 24 degrees
+    \foreach \x in {-45,-21,...,219}
+    \draw[line width=0.2mm] (\x:\radius-\maxticklen) -- (\x:\radius);
+
+    % labels
+    \foreach \x in {1.5,4,6,...,24}{
+      \def\volt{\number\numexpr\x*0.5\relax}
+      \node[rotate=0, font=\fontsize{8}{0},xshift=+0.5mm,yshift=-1.5mm]
+      at (243-\x*12:\labelradius) {\textbf{\sf \x{}V}};
+    }
+  \end{scope}
+}
+
+% parameters: xshift, yshift, label
+\newcommand{\drawswitch}[3]{
+  \begin{scope}[xshift=#1+0.25cm,yshift=#2]
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (2.5mm);
+
+    % labels
+    \node
+    at (0,1.285cm) {\fontsize{10}{0}\textbf{\sf #3}};
+    \node
+    at (0,+0.7cm) {\fontsize{8}{0}\textbf{\sf Off}};
+    \node
+    at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf On}};
+  \end{scope}
+}
+
+% parameters: xshift, yshift, label
+\newcommand{\drawled}[3]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    % drill-hole
+    \draw[fill=black] (0,0) circle (.1mm);
+    \draw (0,0) circle (4.0mm);
+
+    % label
+    \node
+    at (0,-0.7cm) {\fontsize{8}{0}\textbf{\sf #3}};
+  \end{scope}
+}
+
+% parameters: xshift, yshift
+\newcommand{\drawfrontpanel}[2]{
+  \begin{scope}[xshift=#1,yshift=#2]
+    \drawswitch{-2.5cm}{0}{}
+    \drawgauge{-1.5cm}{-0.1cm}{Output Voltage}
+    \drawled{+1.9cm}{+1.3cm}{Power}
+    \draw (-2.7cm,-1.30cm) rectangle (+2.5cm,+1.80cm);
+  \end{scope}
+}
+
+\begin{tikzpicture}[scale=1.0,line width=0.1mm]
+  \foreach \y in {0,1}{
+    \drawfrontpanel{0}{\y*3.7cm}
+    \drawbackpanel{6cm}{\y*3.7cm}
+  }
+\end{tikzpicture}
+
+\end{document}
