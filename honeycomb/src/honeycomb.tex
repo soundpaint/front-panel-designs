@@ -1,0 +1,41 @@
+\NeedsTeXFormat{LaTeX2e}
+\documentclass[tikz,margin=0mm,12pt,a4paper]{standalone}
+
+\begin{document}
+\pagestyle{empty}
+\newcommand\dy{0.2887} % sqrt(3) / 6
+\begin{tikzpicture}
+  % Most simple implementation, but not aligned with paper layout:
+  %
+  %\foreach \y in {0,1,...,10}{
+  %  \foreach \x in {0,1,...,10}{
+  %    \draw (\x+0.5*\y,\y*\dy) -- (\x+0.3333+0.5*\y,\y*\dy);
+  %    \draw (\x+0.3333+0.5*\y,\y*\dy) -- (\x+0.5*\y+0.5,\y*\dy+\dy);
+  %    \draw (\x+0.5*\y,\y*\dy) -- (\x-0.6667+0.5*\y+0.5,\y*\dy+\dy);
+  %  }
+  %}
+  \foreach \x in {0,1,...,20}{
+    \message{.}
+    \foreach \y in {0,2,...,100}{
+      \draw (\x,       \y*\dy-\dy) -- (\x+0.3333,\y*\dy-\dy);
+      \draw (\x+0.3333,\y*\dy-\dy) -- (\x+0.5000,\y*\dy);
+      \draw (\x,       \y*\dy-\dy) -- (\x-0.1667,\y*\dy);
+      \draw (\x+0.5000,\y*\dy)     -- (\x+0.8333,\y*\dy);
+      \draw (\x-0.1667,\y*\dy)     -- (\x,       \y*\dy+\dy);
+      \draw (\x+0.5000,\y*\dy)     -- (\x+0.3333,\y*\dy+\dy);
+    }
+    % Optionally: Draw circles to see how they intersect the
+    % honeycombs (if you want to create something like Bresenham's
+    % circle drawing algorithm, but for a honeycomb raster).
+    %
+    %\draw (10.1667,50*\dy) circle (10pt);
+    %\draw (10.1667,50*\dy) circle (100pt);
+    %\draw (10.1667,50*\dy) circle (200pt);
+  }
+\end{tikzpicture}
+\end{document}
+
+%  Local Variables:
+%    coding:utf-8
+%    mode:LaTeX
+%  End:
